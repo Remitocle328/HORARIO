@@ -1,0 +1,6 @@
+{
+  "name": "Consultar Horario - Portal Académico",
+  "description": "Sistema de Consulta de Horario Académico y Programación de Clases",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

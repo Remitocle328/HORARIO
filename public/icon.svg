@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#205b9b"/>
+  <!-- Inner card -->
+  <rect x="76" y="86" width="360" height="340" rx="36" fill="#ffffff" stroke="#93cbe8" stroke-width="12"/>
+  <!-- Top header of the card -->
+  <path d="M 76 122 C 76 102 92 86 112 86 L 400 86 C 420 86 436 102 436 122 L 436 160 L 76 160 Z" fill="#205b9b"/>
+  <!-- Header rings/binder clips -->
+  <circle cx="160" cy="86" r="14" fill="#ffffff" stroke="#205b9b" stroke-width="6"/>
+  <circle cx="352" cy="86" r="14" fill="#ffffff" stroke="#205b9b" stroke-width="6"/>
+  <!-- Grid lines representing timetable -->
+  <rect x="110" y="190" width="80" height="48" rx="8" fill="#c7fbfb" stroke="#16a34a" stroke-width="6"/>
+  <rect x="216" y="190" width="80" height="48" rx="8" fill="#c7fbfb" stroke="#b31b3b" stroke-width="5"/>
+  <rect x="322" y="190" width="80" height="48" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="5"/>
+
+  <rect x="110" y="260" width="80" height="48" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="5"/>
+  <rect x="216" y="260" width="80" height="48" rx="8" fill="#c7fbfb" stroke="#16a34a" stroke-width="6"/>
+  <rect x="322" y="260" width="80" height="48" rx="8" fill="#c7fbfb" stroke="#b31b3b" stroke-width="5"/>
+
+  <rect x="110" y="330" width="186" height="48" rx="8" fill="#c7fbfb" stroke="#16a34a" stroke-width="6"/>
+  <rect x="322" y="330" width="80" height="48" rx="8" fill="#fef08a" stroke="#ca8a04" stroke-width="5"/>
+
+  <!-- Star / badge -->
+  <circle cx="390" cy="380" r="48" fill="#16a34a" stroke="#ffffff" stroke-width="8"/>
+  <path d="M 390 352 L 398 372 L 420 374 L 403 388 L 408 409 L 390 397 L 372 409 L 377 388 L 360 374 L 382 372 Z" fill="#ffffff"/>
+</svg>

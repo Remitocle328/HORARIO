@@ -1,0 +1,2029 @@
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+<html>
+<head>
+
+<title>DATOS DEL HORARIO</title>
+
+
+
+
+
+
+<link rel="stylesheet"
+	href="/smaudg/vista/script/jquery-ui-1.8.7.custom/development-bundle/themes/efra-theme/jquery.ui.all.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="/smaudg/vista/script/jquery-ui-1.8.7.custom/development-bundle/demos/demos.css"
+	rel="stylesheet">
+	
+
+
+<script language="JavaScript" type="text/JavaScript"
+	src="/smaudg/vista/js/jquery/1.10/jquery-ui-1.10.1/jquery-1.10.1.js"></script>
+<script language="JavaScript" type="text/JavaScript"
+	src="/smaudg/vista/js/jquery/1.10/jquery-ui-1.10.1/ui/jquery-ui.js"></script>
+<script language="JavaScript" type="text/JavaScript"
+	src="/smaudg/vista/js/jquery/1.10/jquery-ui-1.10.1/ui/jquery.ui.core.js"></script>
+<script language="JavaScript" type="text/JavaScript"
+	src="/smaudg/vista/js/jquery/1.10/jquery-ui-1.10.1/ui/jquery.ui.widget.js"></script>
+<script language="JavaScript" type="text/JavaScript"
+	src="/smaudg/vista/js/jquery/1.10/jquery-ui-1.10.1/ui/jquery.ui.button.js"></script>
+<script language="JavaScript" type="text/JavaScript"
+	src="/smaudg/vista/js/jquery/1.10/jquery-ui-1.10.1/ui/jquery.ui.mouse.js"></script>
+<script language="JavaScript" type="text/JavaScript"
+	src="/smaudg/vista/js/jquery/1.10/jquery-ui-1.10.1/ui/jquery.ui.position.js"></script>
+
+<script language="JavaScript" type="text/JavaScript"
+	src="/smaudg/vista/script/jquery.json-2.4.min.js"></script>
+	
+<script src="/smaudg/vista/js/jquery/1.10/jquery-ui-1.10.1/ui/i18n/jquery.ui.datepicker-es.js"></script>
+
+	<script language="JavaScript" type="text/JavaScript"
+	src="/smaudg/vista/script/Funciones.js"></script>
+
+
+
+
+<style type="text/css">
+ 
+<!--ESTILOS PARA LOS DRAGGABLE DE GRUPOS -->
+.midterms {
+	width: 100px;  
+	 
+}
+
+.midterms table {
+	background: #E0ECFF;
+}
+
+.midterms td {
+	background: #eee;
+}
+
+.item {
+	text-align: center;
+	border: 1px solid #499B33;
+	background: #fafafa;
+	width: 100px;
+}
+
+.itemGraf {
+	text-align: center;
+	 width: 30px;
+}
+
+
+.remove {
+	text-align: center;
+	border: 1px solid #499B33;
+	background: #BEBEBE;
+	width: 100px;
+}
+
+.over {
+	border: 1px solid #8A0829;
+	background: #F5A9BC;
+}
+
+
+.schedule { 
+	width: 860px;
+	margin: auto;
+}
+
+.schedule table {
+	background: white;
+	width: 100%;
+}
+
+.schedule td {
+	background: #BEBEBE;
+	text-align: center;
+	padding: 2px;
+}
+
+ 
+.schedule td.empty
+	{
+	background: #ADD8E6;
+	width: 102px;
+}
+
+
+.scheduled
+	{
+	background: #F3F6FF;
+	
+	
+	min-height: 40px;
+}
+.scheduled-over{
+  background: #8FC28B;
+}
+
+.assigned {
+	border: 1px solid #BC2A4D;
+	background: #fafafa;
+	cursor: pointer;
+}
+
+.ttlrow{
+	border: #000000 solid 2pxx|x|
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	color: #0000CC ;
+	background-color: #FFFFFF;			 
+}
+
+.tableMetal {  
+  background-image: url("../../vista/img/tabInactive.jpg");
+  font-family: Verdana ,Tahoma ,Helvatica ,Times New Roman; 
+  font-size: 12px; 
+  color: #333333; 
+  font-weight:normal;
+  font-style: italic; 
+  
+}
+.tablas{
+background: url("../../vista/img/Background.jpg");
+}
+.message{
+  font-family: Verdana ,Tahoma ,Helvatica ,Times New Roman; 
+  font-size: 11px; 
+  color:#330099;
+  font-weight:bold;
+}
+
+.quitarFondo{
+  background-image: none;
+  
+}
+
+
+.colocarRojo{
+  background-image: none;
+  background: red;
+  background-color: red;
+  
+}
+
+.rowtitle {
+  background-image: url("../../vista/img/titlebar.png");
+  font-family: Verdana ,Tahoma ,Helvatica ,Times New Roman; 
+  font-size: 11px; 
+  color: #000000; 
+  font-weight:bold; 
+}
+
+</style>
+<script>
+setPath('/smaudg');
+var lblInicia='2026-08-12';
+var lblTermina='2026-12-18';
+var agnProceso='2026';
+var prdProceso='2';
+var codmat='';
+var nrogrp='';
+var nropak='';
+var npqmat='';
+
+	$(function() {
+		
+		//******* CREANDO DIALOGOS MODALES A PARTIR DE LOS PANELES **************
+		conf_dialog('panel','1060px','950','');
+		conf_dialog('divPrinter','1060px','950','');
+		
+		
+		$('#panel').dialog('option','buttons',{
+        	Imprimir : function(){
+        		printer_schedule();
+        	},
+			Salir: function(){
+        		$(this).dialog('close');
+        	}
+
+        	
+        });
+		
+		$('#divPrinter').dialog('option','buttons',{
+			Salir: function(){
+        		$(this).dialog('close');
+        	}
+
+        	
+        });
+		
+		// CONFIGURANDO LA FORMA COMO MUESTRA EL FORMATO DE FECHA:
+				conf_only_datepicker('dtpSemana','1',lblInicia,lblTermina,'','sma_calculateWeek()','','Seleccionar semana') ;
+				var dateInit=$.datepicker.parseDate( "yy-mm-dd", lblInicia );
+				$('#lblDataInicia').text($.datepicker.formatDate( "dd/MM/yy", dateInit ));
+				var dateFinal=$.datepicker.parseDate( "yy-mm-dd", lblTermina );
+				$('#lblDataFin').text($.datepicker.formatDate( "dd/MM/yy", dateFinal ));
+				
+				$( '[type="checkbox"]').button();
+				$( '[type="checkbox"]').hide();
+				$('button[title="close"]').remove();
+				
+				//alert(new Date());
+				
+				$('#dtpSemana').val($.datepicker.formatDate( "yy-mm-dd", new Date()));
+				sma_calculateWeek();
+				
+				$('#panel').dialog('open');
+			
+				
+	}); ///////// FIN FIN FIN FIN FIN FIN FIN FIN DE LA FUNCTION READY 
+	
+
+		
+	
+	function limpiarHorario(estado){
+		if(estado=='Exito' || estado=='EXITO'){
+			
+			$('.assigned').each(function(){
+				var padre=$(this).parent();
+				$(this).remove();
+				//$(padre).html('&nbsp;<br>&nbsp;<br>&nbsp');
+				$(padre).html('');
+			});
+		}
+		$('#centralFocus').focus();
+	}
+
+	
+	
+	
+	var selectPakForAul;
+	
+	function sma_calculateWeek(){
+		var dateSelected = $('#dtpSemana').datepicker('getDate');
+		var dateInit=$.datepicker.parseDate( "yy-mm-dd", lblInicia );
+		var semSelected=(!dateSelected ? 0 : $.datepicker.iso8601Week(dateSelected));
+		var semInit=(!dateInit ? 0 : $.datepicker.iso8601Week(dateInit));
+		var semana=(!dateInit ? 0 : ''+semSelected-semInit+1);
+		
+		if(semana<0){
+			$('#lblSemGraf').text('').hide();
+			$('#semanaAcademica').val('0');
+			$('div[class="scheduled"]').html('&nbsp;<br>&nbsp;<br>&nbsp;');			
+			return;
+		}else{
+			$('#lblSemGraf').text(semana+' Semana Académica').show();
+			$('#semanaAcademica').val(semana);
+		}	
+			
+		// OJO AQUI DEBO MANDAR A LIMPIAR EL FORMULARIO
+		$('.scheduled').html('&nbsp;<br>&nbsp;<br>&nbsp;');
+		// OJO AQUI DEBO MANDAR A LIMPIAR EL FORMULARIO
+		
+		$('[id*="check_"]').each(function(){
+			sma_paintSchedule(this,true);
+		});
+		
+	} //// FIN FIN FIN FIN FIN sma_calculateWeek
+	
+	function sma_paintAllSchedule(){
+			
+		// OJO AQUI DEBO MANDAR A LIMPIAR EL FORMULARIO
+		$('.scheduled').html('&nbsp;<br>&nbsp;<br>&nbsp;');
+		// OJO AQUI DEBO MANDAR A LIMPIAR EL FORMULARIO
+		
+		var estado=$('#check_TodosAll').is(':checked');
+			$('[id*="check_"]').each(function(){
+				
+				if(estado){
+					this.checked=true;					
+				}else{
+					this.checked=false;
+				}
+				sma_paintSchedule(this,true);
+			});			 
+			
+			conf_tooltip();
+			$('#smaTooltip').css('height','130px');
+			//$('#lblSemGraf').focus();
+			return;	
+			
+	} /// FIN FIN FIN FIN FIN sma_paintAllSchedule
+	
+	function sma_paintSchedule(elemento,con_over){
+		if(!elemento)
+			return;
+		if($(elemento).is(':checked')){
+			$(elemento).next().addClass('quitarFondo').removeClass('ui-state-default').removeClass('ui-state-active');		
+			  if($(semanaAcademica).val()=='0' || $.trim($(semanaAcademica).val())=='')
+				  return;
+			       codmat=$(elemento).parent().children('[name="codmat"]').val();
+			       nrogrp=$(elemento).parent().children('[name="nrogrp"]').val();
+			       nropak=$(elemento).parent().children('[name="nropak"]').val();
+			       npqmat=$(elemento).parent().children('[name="npqmat"]').val();
+			       
+			      var smnpgr=$(semanaAcademica).val();
+			      
+			      if (!codmat || !nrogrp)
+			    	  return;
+			      
+					$.ajax({
+						type : 'post',
+						url : Rutac + '/Adm/ScheduleStudentsViewer',
+						async : false,
+						data : { codmat:codmat,nrogrp:nrogrp,smnpgr:smnpgr,agnprs:agnProceso,prdprs:prdProceso,accion:'GET_SCHEDULE',tpoform:'PGR'},
+						success : function(responseJson) {
+							try {
+ 									//console.info(responseText);
+								if (responseJson=='[]')
+									return
+
+								 var copia=$('#plantillaHoraria').clone();								
+								 if (!copia)
+								    return
+								    
+								    responseJson=$.parseJSON(responseJson);
+								 	var cantPda=$(responseJson).size();
+								 	
+									var responseText;
+									var i
+								    for (p=0 ;p<cantPda;p++ ){
+								    			responseText=responseJson[p];									 
+												var cantRow=$(responseText.daypgr).size();
+												if(cantRow<=0)
+													return;
+												
+												for (var i=0;i<cantRow;i++){
+													$(copia).attr('id',responseText.nropda+'');
+													$(copia).addClass('assigned');
+													$(copia).find('[name="prdpda"]').val(responseText.prdpda);
+													$(copia).find('[name="bgnpda"]').val(responseText.bgnpda);
+													$(copia).find('[name="endpda"]').val(responseText.endpda);
+													$(copia).find('[name="schpda"]').val(responseText.schpda);
+													$(copia).find('[name="nropgr"]').val(responseText.nropgr[i]);
+													$(copia).find('[name="nropak"]').val(nropak);
+													$(copia).find('[id="deslbl"]').text(codmat+'-'+nrogrp+'     '+npqmat);
+													
+													// Configurando el div dentro del tooltip 
+													$(copia).find('[name="fchpgr"]').val(responseText.fchpgr);
+													$(copia).find('[name="nomprf"]').val(responseText.nomprf);
+													$(copia).find('[name="codprf"]').val(responseText.codprf);
+													$(copia).find('[name="nomsde"]').val(responseText.nomsde);
+													$(copia).find('[name="nomedf"]').val(responseText.nomedf);
+													$(copia).find('[name="nomaul"]').val(responseText.nomaul);
+													
+													var selector=responseText.daypgr[i]+'_'+responseText.horpgr[i];
+													
+													//console.info('selector : '+selector);
+													//console.info('selectorStatic : '+selectorStatic);
+													$(copia).css('background-color','#'+responseText.clrmat);
+													//alert($('#plantillaHoraria').html());
+													
+													    $(copia).addClass('tooltip_elemento');
+													$('[id="'+selector+'"]').children().html(copia);
+													var copia=null;
+													var copia=$('#plantillaHoraria').clone();
+												}
+												
+								    }
+									
+									if(con_over){
+										conf_tooltip();
+										$('#smaTooltip').css('height','130px');	
+									}
+									
+								
+									return;
+
+								} catch (e) {
+								 show_message("<center class=\"caption tablas \" style=\height: 100%;font-size: medium;\" >" +e+"</center>",'','ERROR');
+								 
+							}
+
+						}
+					});
+			  		
+			  		//alert('termino');
+			  		
+		}			
+		else{
+			$(elemento).next().addClass('ui-state-default').removeClass('quitarFondo');
+			nropak=$(elemento).parent().children('[name="nropak"]').val();
+			// alert( nropak);
+			 //alert($('input[name="nropak" value="'+nropak+'"] ').size());
+			 $('input[name="nropak" ]').each(function(){
+				 if($(this).val()==nropak){
+					 var padre =$(this).parent();
+					 if($(padre).is('div') && $(padre).hasClass('assigned')){
+						 $(padre).remove();
+					 }
+				 }
+			 });
+			// AQUI MANDO A QUITAR SUS HORARIO
+		}		
+		return;
+		
+	}//// FIN FIN FIN FIN FIN DE sma_paintSchedule
+	
+	
+    
+ 
+	// ************** FUNCIONES DEL TOOLTIP FUNCIONES DEL TOOLTIP ********************************************
+
+  function get_content_tooltip(elemento){
+ 	
+	    
+	  var fchpgr=$(elemento).find('[name="fchpgr"]').val();
+	  var nomprf=$(elemento).find('[name="nomprf"]').val();
+	  var codprf=$(elemento).find('[name="codprf"]').val();
+	  var nomsde=$(elemento).find('[name="nomsde"]').val();
+	  var nomedf=$(elemento).find('[name="nomedf"]').val();
+	  var nomaul=$(elemento).find('[name="nomaul"]').val();
+	  
+	  
+		var tabla="<table class=\"tablas\" style=\"width: 100%\">"+
+	       			"<tr><td align=\"left\"><label  style=\"text-decoration: none;font-weight: bold;\" >FECHA</label>  	</td><td align=\"left\" style=\"text-decoration: none;font-weight: normal;\" > "+fchpgr+"  </td></tr>"+
+	       			"<tr><td align=\"left\"><label  style=\"text-decoration: none;font-weight: bold;\" >PROFESOR</label>  	</td><td align=\"left\" style=\"text-decoration: none;font-weight: normal;\" > "+nomprf+"  </td></tr>"+
+   	   				"<tr><td align=\"left\"><label  style=\"text-decoration: none;font-weight: bold;\" >ID PROF:</label>  	</td><td align=\"left\" style=\"text-decoration: none;font-weight: normal;\" > "+codprf+"  </td></tr>"+
+   	   				"<tr><td align=\"left\" ><label style=\"text-decoration: none;font-weight: bold;\" >SEDE</label>  	</td><td align=\"left\" style=\"text-decoration: none;font-weight: normal;\">  "+nomsde+"	</td></tr>"+
+   	   				"<tr><td align=\"left\"><label  style=\"text-decoration: none;font-weight: bold;\" >EDIFICIO</label>  	</td><td                style=\"text-decoration: none;font-weight: normal;\">  "+nomedf+"	</td></tr>"+
+   	   				"<tr><td align=\"left\"><label  style=\"text-decoration: none;font-weight: bold;\" >AULA</label>  		</td><td                style=\"text-decoration: none;font-weight: normal;\">  "+nomaul+" 	</td></tr>"+
+   	   			"</table>";
+   	   retorno=tabla;
+	 return tabla;
+  	 
+  } 
+
+
+  function get_title_tooltip(elemento){
+	  
+	  var deslbl=$(elemento).find('[id="deslbl"]').text();
+  		return deslbl;
+  }
+  
+    function printer_schedule(){
+	  
+
+      try
+      	{
+			var fecha  = $('#dtpSemana').val();
+			var codbas = ''; 
+			try {
+                    codbas = parent.document.getElementById('codprs').value;//$('#codprs').val();
+                } catch (e) {
+                    codbas = "0182420021";
+                }
+    	  	
+
+		var url   = Rutac + '/Adm/SchedulePrint';
+		$.ajax({
+						type : 'post',
+						url : url,
+						async : false,
+						data : { accion :'STUDENT',fchpgr:fecha,codbas:codbas},
+						success : function(filePdf) {
+							try {								
+ 								var win = window.open("", "Title", "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=780,height=200,top="+(screen.height-400)+",left="+(screen.width-840));
+	 								win.document.body.innerHTML = '<iframe src="data:application/pdf;base64,'+filePdf+'" height="100%" width="100%"></iframe>';
+ 								} catch (e) {
+								 show_message("<center class=\"caption tablas \" style=\height: 100%;font-size: medium;\" >" +e+"</center>",'','ERROR');
+								 
+								}
+						}
+    	});
+      	}catch(e){	
+		show_message("<center class=\"caption tablas \" style=\height: 100%;font-size: medium;\" >" +e+"</center>",'','ERROR');
+      	}      
+      
+  }
+  
+  
+  function printer_schedule_old(){
+	  
+      var url   = Rutac + '/Adm/ScheduleStudentsViewer'; 
+      var fecha = $('#dtpSemana').val();
+      var codbas = '';
+      try
+      	{
+    	  var codbas = parent.document.getElementById('codprs').value;//$('#codprs').val();
+      	}catch(e){
+      		
+      	}
+
+
+      var pars = '?accion=PRINTER_SCHEDULE&fchpgr='+fecha+'&codbas='+codbas;
+      
+      var url= url + pars;
+      
+      var 	openedWindow;          	 
+			openedWindow = window.open( url,"Printer Report","scrollbars=no,titlebar=no, location=no, status=no, menubar=no,resizeable=no, directories=no, toolbar=no")
+    		      
+//       document.formulario.action = url;
+//       document.formulario.submit();
+      
+//        $("#divPrinter" ).html('<img alt="" src="'+Rutav+'/vista/img/ajax-loader2.gif">');
+    		
+//        $("#divPrinter" ).load( url , function() {
+    	  
+//     	});
+      
+//       $('#divPrinter').dialog('open');  
+      return;
+	  
+      
+
+  }
+
+</script>
+
+
+</head>
+
+<body background="/smaudg/vista/img/multilogos.jpg" >
+
+
+	<div align="center" title="CONSULTAR HORARIO" id="panel"   >
+
+		
+		
+<html>
+
+		<script type="text/javascript">
+		   
+		conf_panel('1300','600','divPsm','top');// w
+		   $('#divPsm').dialog('close'); 
+		   $('#divPsm').dialog('option','buttons',{
+			    Imprimir:function (){
+			    	show_syllabus('0182420021',true);
+			    },
+				Salir: function(){
+					$('#iframe_show_syllabus').remove();
+					$('#divPsm').empty();
+		    		$(this).dialog('close');
+		    	}
+		    });  
+		   
+		function show_syllabus( value,exporter ){
+			
+			       var accion= 'SYLLABUS_VIEW';
+				   var ser=Rutac+'/Adm/SyllabusSvgStudent?codbas='+value+'&accion='+accion;
+				   
+					if(exporter==true){
+				    	 window.open(ser+'&exporter=SI','','width=1200,height=600,left=50,top=50');
+				    	 return;
+				     }
+					 $('#divPsm').html('<iframe id="iframe_show_syllabus" src = "'+ser+'"  name="iframe_show_syllabus"  width="98%" height="98%" frameborder="0" allowtransparency="true" ></iframe>'); 
+ 				     $('#divPsm').dialog();    
+					    
+			   }
+		</script>
+
+<table  width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+  <tr>
+    <td>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" >
+
+      <tr class="titlebar_" onclick="try{ hideShowHead(); }catch(ex){}" style="cursor: pointer;">
+        <td width = 'auto'>
+          
+        </td>
+      </tr>
+  
+    </table>
+	<table id = "tableHprs" width="95%" border="0" cellspacing="0" cellpadding="0" class="tablas" bgcolor="#CCCCCC" align="center">
+    
+	<tr>
+      <td width="510">
+      
+	  <table width="510" border="0" cellspacing="2" cellpadding="2">
+	  <tr>
+
+		<td width="110" align="right" class="tableMetal">Periodo Actual</td>&nbsp;&nbsp;
+		<td width="400"><label class="message">2026&nbsp;-&nbsp;2</label>
+		&nbsp;&nbsp;&nbsp;
+		
+		 			 
+	                    <a href="#" title="Plan de Estudio Gráfico del Estudiante" onMouseOver="window.status='Plan de Estudio';return true" onClick="javascript:show_syllabus('0182420021',false)">
+	                            <img src="/smaudg/vista/img/playnstudy.png" alt="Plan de Estudio" title="Plan de Estudios del Estudiante" border="0">
+	                    </a>
+	                     &nbsp;&nbsp;
+	                    <a href="#" title="Historia Acad&eacute;mica del Estudiante" onMouseOver="window.status='Historia Acad&eacute;mica';return true" onClick="javascript:showWindowWait(700,500,'yes','Cargando historia academica, espere por favor...','C/Adm/DataStudent','?events=HRYAKD&title_=Historia Academica&codbas=0182420021','yes');">
+	                            <img src="/smaudg/vista/img/log.gif" alt="Historia Acad&eacute;mica" title="Historia Acad&eacute;mica del Estudiante" border="0">
+	                    </a>
+                    
+	       
+		 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+                   
+
+                      <label class="tableMetal">Acad&eacute;mico &nbsp;</label> <label class="message"> Normal</label>
+                  
+		
+		</td>
+	  </tr>
+	  <tr>
+	  
+		<td width="110" align="right" class="tableMetal">C&oacute;digo</td>
+		<td width="400" class="caption">
+		  <label class="message">0182420021</label>&nbsp;
+		  N&deg; Ident.&nbsp;
+		  <label class="message">1124481817</label>&nbsp;
+		  Sexo&nbsp;
+		  <label class="message">Masculino</label>
+		</td>
+	  </tr>
+	  <tr>
+		<td width="110" align="right" class="tableMetal">Apellidos</td>
+		<td width="400"><label class="message">ATENCIO IPUANA</label></td>
+	  </tr>
+	  <tr>
+		<td width="110" align="right" class="tableMetal">Nombre</td>
+		<td width="400"><label class="message">TEMISTOCLE EISYANIOR</label></td>
+	  </tr>
+	  <tr>
+		<td width="110" align="right" class="tableMetal">E-mail</td>
+		<td width="400">
+			<a class = "hypgrid" href="/cdn-cgi/l/email-protection#94e0f1f5e0f1faf7fdfbd4e1fafdf3e1f5fefde6f5baf1f0e1baf7fb"><span class="__cf_email__" data-cfemail="93e7f6f2e7f6fdf0fafcd3e6fdfaf4e6f2f9fae1f2bdf6f7e6bdf0fc">[email&#160;protected]</span></a></td>
+	  </tr>
+	  <tr>
+		<td width="110" align="right" class="tableMetal">Programa</td>
+		<td width="400" class="caption">
+        	<label class="message">INGENIERIA DE SISTEMAS - RIOHACHA</label>
+            
+            	&nbsp;Sem:&nbsp;<label class="message">05</label>
+            
+        </td>
+	  </tr>
+	  
+		  <tr>
+			<td width="110" align="right" class="tableMetal">Reforma&nbsp;Pensum</td>
+			<td width="400" class="caption">2872</td>
+		  </tr>
+		  
+		  <tr style="display:none;">
+			<td width="110" align="right" class="tableMetal">Especialidad</td>
+			<td width="400" class="message"></td>
+		  </tr>
+	  
+	  </table>
+      
+      
+	  
+	  
+	  </td>
+	  <td width="100">
+	   <img id="phoprs" width="98" height="120" border="0" src="/smaudg/utility/photos/0182420021.jpg">
+	  </td>
+    </tr>
+    
+    </table>
+    </td>
+  </tr>
+</table>
+	<div id="divPsm"  title="Pensum del estudiante" style="display:none;margin-top: 30px; padding-left:0px;min-height:600px;width:1000px;position:relative;margin:auto;-moz-transform: scale(0.80);-moz-transform-origin: 0 0;-o-transform: scale(0.80);-o-transform-origin: 0 0;-webkit-transform-origin: 0 0;" align="center">
+		   	
+	</div>
+	
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></html>
+		
+		<div style="display:none;  clear: both;border: 2px;min-height:50px;margin-top:7px;margin-bottom:7px; width: 100%;border: 1px solid gray ; "  class="tablas"  >
+		<table style="width: 70%" >
+		<tr> <td colspan="4" align="CENTER" ><input class="message" id="centralFocus" style="color: #B0210E;text-align: center;width: 200px" onkeydown="return validFormat(this,event,'none','')"  value="CONSULTAR HORARIO" />  	</td>  </tr>
+		<tr> <td><label class="tableMetal"> Planeación Académica</label> <label class="message"  style="margin-left: 5px">PLANEACIÓN INGENIERIA DE SISTEMAS - RIOHACHA 2026-2</label> </td> <td> <label class="tableMetal">Estado:</label> <label class="message"  style="margin-left: 5px">ACTIVA..</label></td> <td colspan="2">&nbsp;&nbsp;</td> </tr>
+		<tr> <td><label class="tableMetal"> Año - Peri&oacute;do</label> <label class="message"  style="margin-left: 5px">2026 - 2</label> </td> <td  ></td> <td colspan="2">&nbsp;&nbsp;</td> </tr>
+		<tr> <td><label class="tableMetal"> Programa </label> <label class="message" style="margin-left: 5px">INGENIERIA DE SISTEMAS - RIOHACHA</label></td> <td  > </td>  <td colspan="2">&nbsp;&nbsp;</td></tr>
+		</table>
+		
+		</div>
+		<div style="clear: both;border: 2px;min-height:50px;margin-top:7px;margin-bottom:7px; width: 100%;border: 1px solid gray ; "  class="tablas"  >
+		<table style="width: 70%" >
+		<tr> <td><label style="margin-left: 30px" class="tableMetal"> Inicia:</label>   <label class="message" style="margin-left: 5px" id="lblDataInicia">2026-08-12 </label></td>    <td  colspan="3"> <label class="tableMetal">Termina:</label>   <label class="message" style="margin-left: 5px" id="lblDataFin">2026-12-18 </label></td> </tr>
+		<tr> <td ><label class="tableMetal"> Semana </label>   <input id="dtpSemana" type="text"  value=""    onkeydown="return validFormat(this,event,'del','')"   size="11" maxlength="10"  /> <label class="message ui-state-highlight ui-corner-all" style="margin-left: 30px;display: none;"  id="lblSemGraf" style="margin-left: 5px"  ></label></td> <td  > </td>  <td colspan="2">&nbsp;</td></tr>
+		<tr> <td style="height: 5px" colspan="4"><input type="hidden" id="semanaAcademica" value="0"/> </td> </tr>
+		
+		</table>
+		</div>
+
+			<table style="width: auto; height: 100%">
+				<tr>
+					<td align="center" valign="top">
+						
+
+
+						<div class="midterms" style="margin-top: 15px">   
+							<table >
+								<tr  valign="middle">
+								<td align="center"><label class="ttlrow" style="width: 100%;height: 15px"> GRUPOS</label> 
+								 </td>
+									<td id="formatCheck" >
+									 <input type="checkbox" id="check_TodosAll"  onchange="sma_paintAllSchedule()"   />
+									 <label for="check_TodosAll"  >Ver</label>
+									 
+									</td>
+								</tr>
+								
+								<tr>
+									<td>
+										
+										<div class="item "  
+											style="background:#"
+											id='0000979991'    title="0000979991">
+											273251-B1<br>
+											
+											Metodos Numeric<br>&nbsp; 
+
+										</div>
+									</td >
+									<td id="formatCheck" align="center">
+									 <input type="checkbox" id="check_0000979991"  onclick="sma_paintSchedule(this,true);"   />
+									 <label for="check_0000979991" style="background: # ">&nbsp;</label>
+									 			<input type="hidden" name="codmat" value="273251" />
+									 			<input type="hidden" name="nrogrp" value="B1" />
+									 			<input type="hidden" name="nropak" value="0000979991" />
+									 			<input type="hidden" name="npqmat" value="Metodos Numeric" />
+									 			
+									</td>
+									
+
+								</tr>
+								
+								<tr>
+									<td>
+										
+										<div class="item "  
+											style="background:#"
+											id='0000983042'    title="0000983042">
+											273261-D2<br>
+											
+											Investigacion D<br>&nbsp; 
+
+										</div>
+									</td >
+									<td id="formatCheck" align="center">
+									 <input type="checkbox" id="check_0000983042"  onclick="sma_paintSchedule(this,true);"   />
+									 <label for="check_0000983042" style="background: # ">&nbsp;</label>
+									 			<input type="hidden" name="codmat" value="273261" />
+									 			<input type="hidden" name="nrogrp" value="D2" />
+									 			<input type="hidden" name="nropak" value="0000983042" />
+									 			<input type="hidden" name="npqmat" value="Investigacion D" />
+									 			
+									</td>
+									
+
+								</tr>
+								
+								<tr>
+									<td>
+										
+										<div class="item "  
+											style="background:#"
+											id='0000980315'    title="0000980315">
+											273262-C1<br>
+											
+											Metodologia De<br>&nbsp; 
+
+										</div>
+									</td >
+									<td id="formatCheck" align="center">
+									 <input type="checkbox" id="check_0000980315"  onclick="sma_paintSchedule(this,true);"   />
+									 <label for="check_0000980315" style="background: # ">&nbsp;</label>
+									 			<input type="hidden" name="codmat" value="273262" />
+									 			<input type="hidden" name="nrogrp" value="C1" />
+									 			<input type="hidden" name="nropak" value="0000980315" />
+									 			<input type="hidden" name="npqmat" value="Metodologia De" />
+									 			
+									</td>
+									
+
+								</tr>
+								
+								<tr>
+									<td>
+										
+										<div class="item "  
+											style="background:#"
+											id='0000980307'    title="0000980307">
+											273345-B4<br>
+											
+											Programacion Av<br>&nbsp; 
+
+										</div>
+									</td >
+									<td id="formatCheck" align="center">
+									 <input type="checkbox" id="check_0000980307"  onclick="sma_paintSchedule(this,true);"   />
+									 <label for="check_0000980307" style="background: # ">&nbsp;</label>
+									 			<input type="hidden" name="codmat" value="273345" />
+									 			<input type="hidden" name="nrogrp" value="B4" />
+									 			<input type="hidden" name="nropak" value="0000980307" />
+									 			<input type="hidden" name="npqmat" value="Programacion Av" />
+									 			
+									</td>
+									
+
+								</tr>
+								
+								<tr>
+									<td>
+										
+										<div class="item "  
+											style="background:#"
+											id='0000979964'    title="0000979964">
+											273346-A1<br>
+											
+											Estructura De D<br>&nbsp; 
+
+										</div>
+									</td >
+									<td id="formatCheck" align="center">
+									 <input type="checkbox" id="check_0000979964"  onclick="sma_paintSchedule(this,true);"   />
+									 <label for="check_0000979964" style="background: # ">&nbsp;</label>
+									 			<input type="hidden" name="codmat" value="273346" />
+									 			<input type="hidden" name="nrogrp" value="A1" />
+									 			<input type="hidden" name="nropak" value="0000979964" />
+									 			<input type="hidden" name="npqmat" value="Estructura De D" />
+									 			
+									</td>
+									
+
+								</tr>
+								
+								<tr>
+									<td>
+										
+										<div class="item "  
+											style="background:#"
+											id='0000979992'    title="0000979992">
+											273352-B1<br>
+											
+											Arquitectura De<br>&nbsp; 
+
+										</div>
+									</td >
+									<td id="formatCheck" align="center">
+									 <input type="checkbox" id="check_0000979992"  onclick="sma_paintSchedule(this,true);"   />
+									 <label for="check_0000979992" style="background: # ">&nbsp;</label>
+									 			<input type="hidden" name="codmat" value="273352" />
+									 			<input type="hidden" name="nrogrp" value="B1" />
+									 			<input type="hidden" name="nropak" value="0000979992" />
+									 			<input type="hidden" name="npqmat" value="Arquitectura De" />
+									 			
+									</td>
+									
+
+								</tr>
+								
+								<tr>
+									<td>
+										
+										<div class="item "  
+											style="background:#"
+											id='0000980323'    title="0000980323">
+											273366-D2<br>
+											
+											Redes I<br>&nbsp; 
+
+										</div>
+									</td >
+									<td id="formatCheck" align="center">
+									 <input type="checkbox" id="check_0000980323"  onclick="sma_paintSchedule(this,true);"   />
+									 <label for="check_0000980323" style="background: # ">&nbsp;</label>
+									 			<input type="hidden" name="codmat" value="273366" />
+									 			<input type="hidden" name="nrogrp" value="D2" />
+									 			<input type="hidden" name="nropak" value="0000980323" />
+									 			<input type="hidden" name="npqmat" value="Redes I" />
+									 			
+									</td>
+									
+
+								</tr>
+								
+								<tr>
+									<td>
+										
+										<div class="item "  
+											style="background:#"
+											id='0000981181'    title="0000981181">
+											3104-D3<br>
+											
+											ingles iv<br>&nbsp; 
+
+										</div>
+									</td >
+									<td id="formatCheck" align="center">
+									 <input type="checkbox" id="check_0000981181"  onclick="sma_paintSchedule(this,true);"   />
+									 <label for="check_0000981181" style="background: # ">&nbsp;</label>
+									 			<input type="hidden" name="codmat" value="3104" />
+									 			<input type="hidden" name="nrogrp" value="D3" />
+									 			<input type="hidden" name="nropak" value="0000981181" />
+									 			<input type="hidden" name="npqmat" value="ingles iv" />
+									 			
+									</td>
+									
+
+								</tr>
+								
+								
+								<tr  id="trOcultoPlantilla" style="display: none;">
+								<td align="center" > 
+								      <div id="plantillaHoraria" class="item"  style=";margin-left:auto;margin-right: auto;min-height: 40px" >
+											 <label id="deslbl" ></label>
+											 <input type="hidden" name="prdpda" value="1" /> 
+											 <input type="hidden" name="bgnpda" value="" /> 
+											 <input type="hidden" name="endpda" value="" />
+											 <input type="hidden" name="nropak" value="" />
+											 <input type="hidden" name="schpda" value="" />
+											 <input type="hidden" name="nropgr" value="" />
+
+											 <input type="hidden" name="fchpgr" value="" />
+											 <input type="hidden" name="nomprf" value="" />
+											 <input type="hidden" name="codprf" value="" />
+											 <input type="hidden" name="nomsde" value="" />
+											 <input type="hidden" name="nomedf" value="" />
+											 <input type="hidden" name="nomaul" value="" />
+											 											 
+										</div>
+								 </td>
+									<td >
+									  
+									 
+									</td>
+								</tr>
+								<tr>
+									<td align="center">
+										
+										</td>
+										<td style="background: none;background-image: none;background-color: transparent;"></td>
+								</tr>
+
+							</table>
+						</div>
+
+					</td>
+					<td valign="top">
+
+						<div class="schedule">
+							<table>
+								
+								<tr>
+								<td align="center"  colspan="7"><label class="ttlrow" style="width: 100%;height: 15px"> PROGRAMACION</label>
+								</td >
+								</tr>
+								<tr>
+									<td class="blank" width="120px">INTERVALOS</td>
+									
+									<td id="LUNES." class="title">LUNES.</td>
+									
+									<td id="MARTES" class="title">MARTES</td>
+									
+									<td id="MIERCO" class="title">MIERCO</td>
+									
+									<td id="JUEVES" class="title">JUEVES</td>
+									
+									<td id="VIERNE" class="title">VIERNE</td>
+									
+									<td id="SABADO" class="title">SABADO</td>
+									
+
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>06:30-07:14<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._06:30-07:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_06:30-07:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_06:30-07:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_06:30-07:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_06:30-07:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_06:30-07:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>07:15-07:59<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._07:15-07:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_07:15-07:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_07:15-07:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_07:15-07:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_07:15-07:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_07:15-07:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>08:00-08:44<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._08:00-08:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_08:00-08:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_08:00-08:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_08:00-08:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_08:00-08:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_08:00-08:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>08:45-09:29<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._08:45-09:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_08:45-09:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_08:45-09:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_08:45-09:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_08:45-09:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_08:45-09:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>09:30-10:14<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._09:30-10:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_09:30-10:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_09:30-10:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_09:30-10:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_09:30-10:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_09:30-10:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>10:15-10:59<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._10:15-10:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_10:15-10:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_10:15-10:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_10:15-10:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_10:15-10:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_10:15-10:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>11:00-11:44<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._11:00-11:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_11:00-11:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_11:00-11:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_11:00-11:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_11:00-11:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_11:00-11:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>11:45-12:29<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._11:45-12:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_11:45-12:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_11:45-12:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_11:45-12:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_11:45-12:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_11:45-12:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>12:30-13:14<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._12:30-13:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_12:30-13:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_12:30-13:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_12:30-13:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_12:30-13:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_12:30-13:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>13:30-14:14<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._13:30-14:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_13:30-14:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_13:30-14:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_13:30-14:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_13:30-14:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_13:30-14:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>14:15-14:59<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._14:15-14:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_14:15-14:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_14:15-14:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_14:15-14:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_14:15-14:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_14:15-14:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>15:00-15:44<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._15:00-15:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_15:00-15:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_15:00-15:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_15:00-15:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_15:00-15:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_15:00-15:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>15:45-16:29<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._15:45-16:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_15:45-16:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_15:45-16:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_15:45-16:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_15:45-16:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_15:45-16:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>16:30-17:14<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._16:30-17:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_16:30-17:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_16:30-17:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_16:30-17:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_16:30-17:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_16:30-17:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>17:15-17:59<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._17:15-17:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_17:15-17:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_17:15-17:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_17:15-17:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_17:15-17:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_17:15-17:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>18:00-18:44<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._18:00-18:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_18:00-18:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_18:00-18:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_18:00-18:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_18:00-18:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_18:00-18:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>18:45-19:29<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._18:45-19:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_18:45-19:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_18:45-19:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_18:45-19:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_18:45-19:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_18:45-19:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>19:30-20:14<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._19:30-20:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_19:30-20:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_19:30-20:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_19:30-20:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_19:30-20:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_19:30-20:14">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>20:15-20:59<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._20:15-20:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_20:15-20:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_20:15-20:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_20:15-20:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_20:15-20:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_20:15-20:59">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>21:00-21:44<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._21:00-21:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_21:00-21:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_21:00-21:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_21:00-21:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_21:00-21:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_21:00-21:44">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+								<tr>
+									<td class="time" width="120px"><br>21:45-22:29<br>&nbsp;</td>
+									
+									<td class="empty"
+										id="LUNES._21:45-22:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MARTES_21:45-22:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="MIERCO_21:45-22:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="JUEVES_21:45-22:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="VIERNE_21:45-22:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+									<td class="empty"
+										id="SABADO_21:45-22:29">
+										<div class="scheduled">
+											&nbsp;<br>&nbsp;<br>&nbsp;
+										</div>
+									</td>
+									
+								</tr>
+								
+
+
+								<tr>
+									<td class="blank" width="120px">INTERVALOS</td>
+									
+									<td id="LUNES." class="title">LUNES.</td>
+									
+									<td id="MARTES" class="title">MARTES</td>
+									
+									<td id="MIERCO" class="title">MIERCO</td>
+									
+									<td id="JUEVES" class="title">JUEVES</td>
+									
+									<td id="VIERNE" class="title">VIERNE</td>
+									
+									<td id="SABADO" class="title">SABADO</td>
+									
+
+								</tr>
+							</table>
+
+						</div>
+
+
+					</td>
+				</tr>
+
+			</table>
+
+
+		
+	</div>
+	
+	
+	
+	<div id="divPrinter"  title="HORARIO DE ESTUDIANTE"  align="center">
+		    <iframe id="iframe_show_schedule"  name="iframe_show_schedule"  width="98%" height="98%" frameborder="0" ></iframe>  
+	</div>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"24fc7470ab74476ca9e0624aeff42a99","spa":2}' crossorigin="anonymous"></script>
+</body>
+
+</html>
